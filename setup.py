@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='kamalsql',
@@ -9,13 +9,12 @@ setup(
     author='Kamal Sharma',
     author_email='kamaldgrt@gmail.com',
     url='https://github.com/KamalDGRT/kamalsql',
-    download_url='https://github.com/KamalDGRT/kamalsql',
     keywords=['Simple', 'Functional', 'Dependable'],
     install_requires=[
         'mysql-connector',
     ],
     classifiers=[
-        'Development Status :: 1 - Beta',
+        'Development Status :: 1 - Planning',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Topic :: Software Development :: Libraries :: Python Modules',
