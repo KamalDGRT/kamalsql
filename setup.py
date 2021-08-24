@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='kamalsql',
     packages=['kamalsql'],
-    version='0.0.1',
+    version='0.0.2',
     license='MIT',
     description='A simple Python wrapper for your MySQL needs.',
     author='Kamal Sharma',
@@ -12,6 +12,7 @@ setup(
     keywords=['Simple', 'Functional', 'Dependable'],
     install_requires=[
         'mysql-connector',
+        'tabulate',
     ],
     classifiers=[
         'Development Status :: 1 - Planning',

@@ -1,17 +1,15 @@
 import mysql.connector as mysql
+from tabulate import tabulate
 
 
 class KamalSQL:
-    """
-    A simple wrapper for MySQL (mysql-connector)
-    """
-
     config = None
     connection = None
     cursor = None
 
     def __init__(self, **kwargs) -> None:
         self.config = kwargs
+        self.config["autocommit"] = kwargs.get("autocommit", False)
         self.connect()
 
     def connect(self) -> None:
@@ -27,6 +25,7 @@ class KamalSQL:
                 passwd=self.config['password']
             )
             self.cursor = self.connection.cursor()
+            self.connection.autocommit = self.config["autocommit"]
         except:
             print('Could not connect to the MySQL server.')
             raise
@@ -38,13 +37,10 @@ class KamalSQL:
 
     def query(self, sqlQuery, params=None):
         """
-        Runs a raw query
-
-        Credits: github.com/knadh/simplemysql
+        Run a raw SQL query
         """
 
         # check if connection is alive. if not, reconnect
-
         try:
             self.cursor.execute(sqlQuery, params)
         except mysql.OperationalError as e:
@@ -63,14 +59,48 @@ class KamalSQL:
 
     def showTables(self) -> list:
         """
-        Returns a list with the tables present in the
-        database.
+        Returns a list with the tables
+        present in the database.
         """
         sqlQuery = 'SHOW TABLES;'
         fetcher = self.query(sqlQuery)
 
         tables = [table[0] for table in fetcher]
         return tables
+
+    def describeTable(self, table) -> list:
+        """
+        Returns a list of tuples witht the table description.
+        """
+        sqlQuery = 'DESC ' + table + ';'
+        fetcher = self.query(sqlQuery)
+        details = [table for table in fetcher]
+        details.insert(0, ('Field', 'Type', 'Null', 'Key', 'Default', 'Extra'))
+        return details
+
+    def fancyDescribeTable(self, table) -> str:
+        """
+        Returns the table description in a tabular format.
+        """
+        return tabulate(
+            self.describeTable(
+                table
+            ),
+            headers='firstrow',
+            tablefmt='fancy_grid'
+        )
+
+    def insert(self, table, info):
+        """
+        Inserts a record into a given table.
+        """
+        columns = tuple(info.keys())
+        values = tuple(info[column] for column in columns)
+        sqlQuery = 'INSERT INTO ' + table + ' '
+        sqlQuery += str(columns).replace("'", '')
+        sqlQuery += ' VALUES ' + str(values) + ';'
+        print(sqlQuery)
+        return self.query(sqlQuery)
 
     def commit(self):
         """
