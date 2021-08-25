@@ -1,4 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+
+# Read the README.md file
+with open('README.md') as file_handle:
+    file_content = file_handle.read()
 
 setup(
     name='kamalsql',
@@ -6,6 +10,8 @@ setup(
     version='0.0.2',
     license='MIT',
     description='A simple Python wrapper for your MySQL needs.',
+    long_description=file_content,
+    long_description_content_type="text/markdown",
     author='Kamal Sharma',
     author_email='kamaldgrt@gmail.com',
     url='https://github.com/KamalDGRT/kamalsql',
