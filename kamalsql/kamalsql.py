@@ -33,8 +33,8 @@ class KamalSQL:
 
     def status(self) -> str:
         if (self.connection):
-            return 'Connection Succesful'
-        return 'Connection Unsucessful'
+            return 'Connection Successful'
+        return 'Connection Unsuccessful'
 
     def query(self, sqlQuery, params=None):
         """
@@ -226,5 +226,5 @@ class KamalSQL:
         self.cursor.close()
         self.connection.close()
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self):
         self.end()
