@@ -47,7 +47,7 @@ class KamalSQL:
         except mysql.OperationalError as e:
             # If mysql timed out,
             #    reconnect and retry once
-            if e[0] == 2006:
+            if e[0] == 2006 or e.args[0] == 2013:
                 self.connect()
                 self.cursor.execute(sqlQuery, params)
             else:
@@ -71,7 +71,7 @@ class KamalSQL:
 
     def describeTable(self, table) -> list:
         """
-        Returns a list of tuples witht the table description.
+        Returns a list of tuples with the table description.
         """
         sqlQuery = 'DESC ' + table + ';'
         fetcher = self.query(sqlQuery)
@@ -83,9 +83,12 @@ class KamalSQL:
         """
         Returns the table generated from rows in a tabular format.
         """
-        firstRow = dict(zip(data[0].keys(), data[0].keys()))
-        data.insert(0, firstRow)
-        return '\n' + tabulate(data, headers='firstrow') + '\n'
+        if (data is None):
+            return 'The table is empty !!!'
+        else:
+            firstRow = dict(zip(data[0].keys(), data[0].keys()))
+            data.insert(0, firstRow)
+            return '\n' + tabulate(data, headers='firstrow') + '\n'
 
     def fancyDescribeTable(self, table) -> str:
         """
@@ -188,6 +191,25 @@ class KamalSQL:
         if where and len(where) > 1:
             params += where[1]
 
+        return self.query(sqlQuery, params)
+
+    def delete(self, table, where=None):
+        """
+        Delete rows based on a WHERE condition.
+        """
+
+        sqlQuery = "DELETE FROM " + table
+
+        # where conditions
+        # if where condition exists, then append to query
+        if where and len(where) > 0:
+            sqlQuery += " WHERE %s" % where[0]
+
+        # Parameters to be passed, applies only to where
+        # clause because the argument size fluctuates.
+        params = None
+        if where and len(where) > 1:
+            params = where[1]
         return self.query(sqlQuery, params)
 
     def commit(self):
