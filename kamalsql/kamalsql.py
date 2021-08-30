@@ -162,11 +162,12 @@ class KamalSQL:
         """
         Inserts a record into a given table.
         """
-        columns = tuple(info.keys())
-        values = tuple(info[column] for column in columns)
+        columns = [key for key in info.keys()]
+        values = [info[column] for column in columns]
         sqlQuery = 'INSERT INTO ' + table + ' '
         sqlQuery += str(columns).replace("'", '')
         sqlQuery += ' VALUES ' + str(values) + ';'
+        sqlQuery = sqlQuery.replace('[', '(').replace(']', ')')
         return self.query(sqlQuery)
 
     def update(self, table, info, where=None):
